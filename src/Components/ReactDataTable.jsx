@@ -1,122 +1,63 @@
 import React from 'react'
 import DataTable from 'react-data-table-component';
 
-// Sample data for the latest orders
-const data = [
-  {
-    id: 1,
-    productName: 'Perfume A',
-    personName: 'John Doe',
-    location: 'New York',
-    dateTime: '2024-10-05 14:30',
-    pieces: 2,
-    amount: 50,
-    status: 'Shipped',
-  },
-  {
-    id: 2,
-    productName: 'Perfume B',
-    personName: 'Jane Smith',
-    location: 'Los Angeles',
-    dateTime: '2024-10-05 15:00',
-    pieces: 1,
-    amount: 30,
-    status: 'Pending',
-  },
-  {
-    id: 3,
-    productName: 'Perfume C',
-    personName: 'Alice Johnson',
-    location: 'Chicago',
-    dateTime: '2024-10-05 16:00',
-    pieces: 3,
-    amount: 75,
-    status: 'Delivered',
-  },
-  // Add more orders as needed
-];
 
-// Define columns for the data table
-const columns = [
-  {
-    name: (
-      <div className='w-96 text-center'>
-        <h1 className='w-full'>Product Name</h1>
-      </div>
-    ),
-    selector: (row) => row.productName,
-    sortable: true,
-    cell:(row)=>(
-      <div className='w-full'>
-        <h1 className='w-full text-center'>{row.productName}</h1>
-      </div>
-    )
-  },
-  {
-    name: (
-      <div className='w-96'>
-        <h1 className='w-full'>Name Of Person</h1>
-      </div>
-    ),
-    selector: (row) => row.personName,
-    sortable: true,
-  },
-  {
-    name: 'Location',
-    selector: (row) => row.location,
-    sortable: true,
-  },
-  {
-    name: 'Date - Time',
-    selector: (row) => row.dateTime,
-    sortable: true,
-  },
-  {
-    name: (
-      <div className='w-full text-center'>
-        <h1>Pieces</h1>
-      </div>
-    ),
-    selector: (row) => row.pieces,
-    sortable: true,
-    cell:(row)=>(
-      <div className='w-full'>
-        <h1 className='text-center'>{row.pieces}</h1>
-      </div>
+const generateColumns =(data)=>{
+  if(!data || data.length === 0 ) return [];
 
-    )
-  },
-  {
-    name: (
-      <div className='w-full text-center'>
-        <h1>Amount</h1>
-      </div>
-    ),
-    selector: (row) => row.amount,
-    sortable: true,
-    cell:(row)=>(
-      <div className='w-full'>
-        <h1 className='text-center'>${row.amount}</h1>
-      </div>
-    )
-  },
-  {
-    name: (
-      <div className='w-full text-center'>
-        <h1>Status</h1>
-      </div>
-    ),
-    selector: (row) => row.status,
-    sortable: true,
-    cell:(row)=>(
-      <div className='w-full'>
-        <div className={`p-2 px-5  rounded-lg ${row.status === 'Shipped'?'bg-green-400':row.status === 'Pending'?'bg-yellow-200':'bg-red-500'}`}>
-          {row.status}
+  return Object.keys(data[0]).map((key)=> {
+    if(key === 'id')return null ; 
+
+    return {
+      name:(
+        <div className=' w-32 text-center'>
+          <h1>{formatColumnName(key)}</h1>
         </div>
-      </div>
-    )
-  },
-];
+      ),
+      selector:(row)=>row[key],
+      sortable:true,
+      cell:(row)=>(
+        <div className=' text-center '>
+            {
+              key === 'amount'?
+              (
+                <h1>${row[key]}</h1>
+              )
+              :key === 'status'?
+              (
+                <div className={`p-2 px-5 rounded-lg ${row[key]=== 'Shipped'?'bg-green-400':row[key]==='Pending'?'bg-yellow-400':'bg-red-500'}`}>
+                  {row[key]}
+                </div>
+              )
+              :key === 'productPhoto' ?
+              (
+                <div className='p-2 px-5 flex flex-row items-center gap-2'>
+                  <div className='p-6 rounded-lg bg-gray-400'>
+
+                  </div>
+                  <div className='border p-1'>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="21" viewBox="0 0 20 21" fill="none">
+                      <path d="M16.25 5.17456H14.0008L12.8906 3.50815C12.8477 3.44389 12.7896 3.39121 12.7215 3.35482C12.6533 3.31843 12.5773 3.29945 12.5 3.29956H7.5C7.42274 3.29945 7.34665 3.31843 7.2785 3.35482C7.21035 3.39121 7.15225 3.44389 7.10938 3.50815L5.99844 5.17456H3.75C3.29416 5.17456 2.85699 5.35564 2.53466 5.67797C2.21233 6.0003 2.03125 6.43747 2.03125 6.89331V15.6433C2.03125 16.0992 2.21233 16.5363 2.53466 16.8587C2.85699 17.181 3.29416 17.3621 3.75 17.3621H16.25C16.7058 17.3621 17.143 17.181 17.4653 16.8587C17.7877 16.5363 17.9688 16.0992 17.9688 15.6433V6.89331C17.9688 6.43747 17.7877 6.0003 17.4653 5.67797C17.143 5.35564 16.7058 5.17456 16.25 5.17456ZM17.0312 15.6433C17.0312 15.8505 16.9489 16.0492 16.8024 16.1957C16.6559 16.3423 16.4572 16.4246 16.25 16.4246H3.75C3.5428 16.4246 3.34409 16.3423 3.19757 16.1957C3.05106 16.0492 2.96875 15.8505 2.96875 15.6433V6.89331C2.96875 6.68611 3.05106 6.4874 3.19757 6.34088C3.34409 6.19437 3.5428 6.11206 3.75 6.11206H6.25C6.32726 6.11218 6.40335 6.09319 6.4715 6.0568C6.53965 6.02041 6.59775 5.96774 6.64062 5.90347L7.75078 4.23706H12.2484L13.3594 5.90347C13.4023 5.96774 13.4604 6.02041 13.5285 6.0568C13.5967 6.09319 13.6727 6.11218 13.75 6.11206H16.25C16.4572 6.11206 16.6559 6.19437 16.8024 6.34088C16.9489 6.4874 17.0312 6.68611 17.0312 6.89331V15.6433ZM10 7.67456C9.35103 7.67456 8.71663 7.867 8.17704 8.22755C7.63744 8.5881 7.21687 9.10056 6.96852 9.70013C6.72017 10.2997 6.65519 10.9595 6.7818 11.596C6.90841 12.2325 7.22091 12.8171 7.67981 13.276C8.1387 13.7349 8.72336 14.0474 9.35986 14.174C9.99636 14.3006 10.6561 14.2356 11.2557 13.9873C11.8553 13.7389 12.3677 13.3184 12.7283 12.7788C13.0888 12.2392 13.2812 11.6048 13.2812 10.9558C13.2812 10.0856 12.9355 9.25097 12.3202 8.63562C11.7048 8.02026 10.8702 7.67456 10 7.67456ZM10 13.2996C9.53645 13.2996 9.08331 13.1621 8.69788 12.9046C8.31245 12.647 8.01205 12.281 7.83466 11.8527C7.65726 11.4245 7.61085 10.9532 7.70128 10.4986C7.79172 10.0439 8.01494 9.62631 8.34272 9.29853C8.6705 8.97075 9.08811 8.74753 9.54276 8.6571C9.9974 8.56666 10.4686 8.61308 10.8969 8.79047C11.3252 8.96786 11.6912 9.26827 11.9488 9.65369C12.2063 10.0391 12.3438 10.4923 12.3438 10.9558C12.3438 11.5774 12.0968 12.1736 11.6573 12.6131C11.2177 13.0526 10.6216 13.2996 10 13.2996Z" fill="white" style={{fill:'white',fillOpacity:1}}/>
+                    </svg>
+                  </div>
+                </div>
+              )
+              :
+              (
+                <h1>{row[key]}</h1>
+              )
+            }
+        </div>
+      )
+    }
+  }).filter(column =>column != null );
+}
+
+const formatColumnName=(name)=>{
+  return name.replace(/([A-Z])/g,` $1`)
+            .replace(/^./,(str)=>str.toUpperCase());
+}
+
 
 
 // Define custom styles for the data table
@@ -145,17 +86,54 @@ const customStyles = {
   },
 };
 
-const ReactDataTable = () => {
+const ReactDataTable = ({dataEntered}) => {
+
+  const data = [
+    {
+      id: 1,
+      productName: 'Perfume A',
+      personName: 'John Doe',
+      location: 'New York',
+      dateTime: '2024-10-05 14:30',
+      pieces: 2,
+      amount: 50,
+      status: 'Shipped',
+    },
+    {
+      id: 2,
+      productName: 'Perfume B',
+      personName: 'Jane Smith',
+      location: 'Los Angeles',
+      dateTime: '2024-10-05 15:00',
+      pieces: 1,
+      amount: 30,
+      status: 'Pending',
+    },
+    {
+      id: 3,
+      productName: 'Perfume C',
+      personName: 'Alice Johnson',
+      location: 'Chicago',
+      dateTime: '2024-10-05 16:00',
+      pieces: 3,
+      amount: 75,
+      status: 'Delivered',
+    },
+    // Add more orders as needed
+  ];
+
+  const columns = generateColumns(dataEntered === undefined ? data : dataEntered);
   return (
     <div style={{ overflowX: 'auto' }}>
       
       <DataTable
         customStyles={customStyles}
         columns={columns}
-        data={data}
+        data={dataEntered !== undefined ? dataEntered : data}
         fixedHeader
         highlightOnHover // Highlight row on hover
         pointerOnHover // Change cursor on hover
+        
       />
     </div>
   )
