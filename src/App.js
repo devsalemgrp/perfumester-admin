@@ -8,6 +8,8 @@ import Women from './Pages/Women/women';
 import New from './Pages/New/new';
 import OrderList from './Pages/OrderList/orderList';
 import Products from './Pages/Products/products';
+import PackagesDetails from './Pages/Packages/packages';
+import Subscriptions from './Pages/Subscriptions/subscriptions';
 
 function App() {
   return (
@@ -23,8 +25,10 @@ function App() {
           <Route path='/men' element={<Men/>}/>
           <Route path='/women' element={<Women/>}/>
           <Route path='/new' element={<New/>}/>
-          <Route path='/orderList' element={<OrderList/>}/>
-          <Route path='/products' element={<Products/>}/>
+          <Route path='/orders' element={<OrderList/>}/>
+          <Route path='/stock' element={<Products/>}/>
+          <Route path='/packages' element={<PackagesDetails/>}/>
+          <Route path='/subscriptions' element={<Subscriptions/>}/>
         </Routes>
       </div>
     </div>

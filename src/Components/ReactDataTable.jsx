@@ -2,7 +2,7 @@ import React from 'react'
 import DataTable from 'react-data-table-component';
 
 
-const generateColumns =(data)=>{
+const generateColumns =(data , editProduct)=>{
   if(!data || data.length === 0 ) return [];
 
   return Object.keys(data[0]).map((key)=> {
@@ -10,24 +10,38 @@ const generateColumns =(data)=>{
 
     return {
       name:(
-        <div className=' w-32 text-center'>
-          <h1>{formatColumnName(key)}</h1>
-        </div>
+          key === 'action'?(
+            <div className=' w-56 text-center'>
+              <h1>{formatColumnName(key)}</h1>
+            </div>
+          ):
+          (
+            <div className=' w-44 text-center'>
+              <h1>{formatColumnName(key)}</h1>
+            </div>
+          )
+        
       ),
       selector:(row)=>row[key],
-      sortable:true,
+      sortable: key !== 'action',
       cell:(row)=>(
-        <div className=' text-center '>
+        <div className='w-full'>
             {
               key === 'amount'?
               (
-                <h1>${row[key]}</h1>
+                <h1 className='text-center'>${row[key]}</h1>
               )
               :key === 'status'?
               (
-                <div className={`p-2 px-5 rounded-lg ${row[key]=== 'Shipped'?'bg-green-400':row[key]==='Pending'?'bg-yellow-400':'bg-red-500'}`}>
+                <div className={`p-2 px-5 text-center rounded-lg ${row[key]=== 'Shipped'?'bg-green-400':row[key]==='Pending'?'bg-yellow-400':'bg-red-500'}`}>
                   {row[key]}
                 </div>
+              )
+              :key === 'price'? 
+              (
+                <h1 className='text-center'>
+                  ${row[key]}
+                </h1>
               )
               :key === 'productPhoto' ?
               (
@@ -42,9 +56,23 @@ const generateColumns =(data)=>{
                   </div>
                 </div>
               )
+              :key === 'action'?
+              (
+                <div className='flex flex-row gap-2'>
+                  <div className='p-2 px-5 bg-transparent border rounded-lg' onClick={()=>editProduct()} >
+                    Edit
+                  </div>
+                  <div className='flex items-center px-5 bg-transparent border  rounded-lg'>
+                    <select name="" id="" className='bg-transparent outline-none'>
+                      <option value="Active"> Active</option>
+                      <option value="InActive"> InActive</option>
+                    </select>
+                  </div>
+                </div>
+              )
               :
               (
-                <h1>{row[key]}</h1>
+                <h1 className='w-full text-center'>{row[key]}</h1>
               )
             }
         </div>
@@ -67,7 +95,7 @@ const customStyles = {
       backgroundColor: '#323D4E', // Header background color
       color: '#FFFFFF', // Header text color
       fontWeight: 'bold', // Header text weight
-      fontSize:'20px'
+      fontSize:'20px',
     },
   },
   rows: {
@@ -86,7 +114,7 @@ const customStyles = {
   },
 };
 
-const ReactDataTable = ({dataEntered}) => {
+const ReactDataTable = ({dataEntered,editProduct}) => {
 
   const data = [
     {
@@ -122,7 +150,7 @@ const ReactDataTable = ({dataEntered}) => {
     // Add more orders as needed
   ];
 
-  const columns = generateColumns(dataEntered === undefined ? data : dataEntered);
+  const columns = generateColumns(dataEntered === undefined ? data : dataEntered,editProduct);
   return (
     <div style={{ overflowX: 'auto' }}>
       

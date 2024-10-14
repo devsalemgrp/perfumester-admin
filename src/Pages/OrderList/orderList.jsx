@@ -59,9 +59,9 @@ const OrderList = () => {
     return (
         <div className='w-full p-14'>
                 <div>
-                    <h1 className='text-3xl'>Order List</h1>
+                    <h1 className='text-4xl'>Order List</h1>
                     <div className='bg-black mt-10 p-10 rounded-lg'>
-                        <h1 className='text-3xl mb-10'>Latest Orders</h1>
+                        <h1 className='text-3xl mb-10'>{isLatestOrders? "Latest Orders":"Received Orders"}</h1>
 
                         <div className='flex flex-row gap-x-5 my-5'>
                             <div className={`px-5 py-2 text-black cursor-pointer  ${isLatestOrders?'bg-slate-500':'bg-white'}`}onClick={()=>setIsLatestOrders(true)}>

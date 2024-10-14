@@ -1,8 +1,33 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import BackgroundImage from '../../Assets/HomePage/background.png'
 import Women from '../../Assets/HomePage/Women.png'
-
+import WelcomePageModal from './Modals/welcomeSectionModal'
+import HeroSectionModal from './Modals/heroSectionModal'
+import Section2Modal from './Modals/section2Modal'
+import CallToActionModal from './Modals/callToActionModal'
+ 
 const Home = () => {
+
+    //Home table 
+    /**
+     * 1. Welcome Section
+     *  - Add another image
+     * 2. Hero Section
+     *  - H3 Title
+     *  - H1 Title
+     *  - Text
+     * 3. Section 2
+     *  - Replace Image1
+     *  - Replace Image2
+     * 4. Package Section
+     *  - Hide or Not 
+     * 5. Call To Action
+     *  - H1 Title
+     *  - Button 1
+     *  - Button 2
+     */
+
+
     const backgroundImages=[
         {
             image:BackgroundImage
@@ -20,16 +45,183 @@ const Home = () => {
             image:Women,
         }
     ]
+
+    const heroDataArray=[
+        {
+            'H3 Title':'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sit amet felis sit amet nunc tincidunt efficitur. '
+        },
+        {
+            'H1 Title':'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sit amet felis sit amet nunc tincidunt efficitur. '
+        },
+        {
+            'Text':'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sit amet felis sit amet nunc tincidunt efficitur. '
+        }
+    ]
+    const ctaDataArray = [
+        {
+            'H1 Title': 'Exclusive brands for you!',
+        },
+        {
+            'Button 1': 'Explore our collection',
+        },
+        {
+            'Button 2': 'Get one of our packages',
+        }
+    ];
+
+    //When i click edit on the data , this data is found in the database , which means 
+    // i have the id and that whatever i change on this data , i update it on the database 
+
+    const [isOpenModal,setIsOpenModal] = useState({
+        welcome:{
+            addAnotherImage:false,
+            deleteImage:false,
+        },
+        hero:false,
+        section2:{
+            replaceImage:false,
+            deleteImage:false
+        },
+        cta:false
+    });
+  
+    const [welcomeData,setWelcomeData] = useState(null);
+    const [section2Data, setSection2Data] = useState(null);
+    const [heroData,setHeroData] = useState(heroDataArray);
+    const [callToActionData, setCallToActionData] = useState(ctaDataArray);
+    
+
+    //Opening Modal Functions
+    const openWelcomeModal=(modalType)=>{
+        setIsOpenModal(
+            (prevState)=>({
+                ...prevState,
+                welcome:{
+                    ...prevState.welcome,
+                    [modalType]:true
+                }
+            })
+        )
+    }
+    const openHeroSectionModal=()=>{
+        setIsOpenModal(
+            (prevState)=>({
+                ...prevState,
+                hero:true
+            })
+        )
+    }
+    const openSection2Modal=(modalType)=>{
+        setIsOpenModal(
+            (prevState)=>({
+                ...prevState,
+                section2:{
+                    ...prevState.section2,
+                    [modalType]:true
+                }
+            })
+        )
+    }
+    const openCtaModal =()=>{
+        setIsOpenModal(
+            (prevState)=>({
+                ...prevState,
+                cta:true
+            })
+        )
+    }
+    
+
+    //Closing Modal Functions 
+    const closeWelcomeModal=(modalType)=>{
+        setIsOpenModal(
+            (prevState)=>({
+                ...prevState,
+                welcome:{
+                    ...prevState.welcome,
+                    [modalType]:false
+                }
+            })
+        )
+    }
+
+    const closeHeroSectionModal=()=>{
+        setIsOpenModal(
+            (prevState)=>({
+                ...prevState,
+                hero:false
+            })
+        )
+    }
+
+    const closeSection2Modal=(modalType)=>{
+        setIsOpenModal(
+            (prevState)=>({
+                ...prevState,
+                section2:{
+                    ...prevState.section2,
+                    [modalType]:false
+                }
+            })
+        )
+    }
+
+    const closeCtaModal = ()=>{
+        setIsOpenModal(
+            (prevState)=>({
+                ...prevState,
+                cta:false}))
+    }
+
+    
+
+
+
   return (
     <div className='w-full p-20 flex flex-col gap-y-5'>
-        <h1 className='text-3xl'>Home Page</h1>
+        <WelcomePageModal
+            isOpenModal={isOpenModal}
+            closeModal={closeWelcomeModal}  
+            data={welcomeData}
+        >
+        </WelcomePageModal>
 
+        <HeroSectionModal
+            isOpenModal={isOpenModal}
+            closeModal={closeHeroSectionModal}  
+            data={heroData}
+        >
+        </HeroSectionModal>
+
+        <Section2Modal
+            isOpenModal={isOpenModal}
+            closeModal={closeSection2Modal}
+            data={section2Data}
+            >
+
+        </Section2Modal>
+
+        <CallToActionModal
+            isOpenModal={isOpenModal}
+            closeModal={closeCtaModal}
+            data={callToActionData}
+
+        >
+        </CallToActionModal>
+
+
+        <h1 className='text-4xl'>Home Page</h1>
         <div className='bg-black p-5 w-full flex flex-col gap-y-2 rounded-md '>
-
             <div className='flex flex-row items-center justify-between'>
                 <h1 className='text-3xl'>Welcome Section</h1>
 
-                <div className='p-2 px-5 bg-[#323d4e] rounded-md flex flex-row gap-2 items-center cursor-pointer'>
+                <div 
+                    className='p-2 px-5 bg-[#323d4e] rounded-md flex flex-row gap-2 items-center cursor-pointer'
+                    onClick={()=>{
+                        openWelcomeModal('addAnotherImage');
+                        
+                    }}
+                    >
                     <svg xmlns="http://www.w3.org/2000/svg" width="9" height="10" viewBox="0 0 9 10" fill="none">
                         <path d="M9 5.75712H5.14286V9.61426H3.85714V5.75712H0V4.4714H3.85714V0.614258H5.14286V4.4714H9V5.75712Z" fill="white" style={{fill:'white',fillOpacity:1}}/>
                     </svg>
@@ -47,7 +239,11 @@ const Home = () => {
                                 <span className='text-sm'>Set as Image 1</span>
                             </div>
 
-                            <div className=' bg-white text-black px-2 flex items-center rounded-md cursor-pointer'>
+                            <div
+                                onClick={()=>{
+                                    setWelcomeData(element)
+                                    openWelcomeModal('deleteImage')}} 
+                                className=' bg-white text-black px-2 flex items-center rounded-md cursor-pointer'>
                                 <span className='text-sm'>Delete</span>
                             </div>
                         </div>
@@ -56,51 +252,26 @@ const Home = () => {
             </div>
         </div>
 
-        <div className='bg-black p-5 w-full flex flex-col gap-y-2 rounded-md'>
+        <div 
+            className='bg-black p-5 w-full flex flex-col gap-y-2 rounded-md' 
+            onClick={()=>{
+                openHeroSectionModal('hero')}
+            }
+        >
 
             <h1 className='text-3xl'>Hero Section</h1>
 
-            <div className='border-2 p-2 flex flex-col'>
-                <h1>H3 Title</h1>
-                <p className='opacity-60'> 
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
-                    Sed sit amet felis sit amet nunc tincidunt efficitur. 
-                    Vivamus auctor, purus nec tincidunt tincidunt, nunc neque 
-                    efficitur risus, nec porta turpis mauris nec purus. 
-                    Nulla facilisi. Integer nec tellus in nunc ultricies 
-                    tincidunt. Etiam auctor, lorem ac ultrices ultricies, 
-                    nunc elit ultricies nisi, nec fermentum nunc nunc 
-                    eget purus.
-                </p>
-            </div>
+            {heroDataArray.map((element,index)=>(
+                <div className='border-2 p-2 flex flex-col'>
+                    <h1>{Object.keys(element)}</h1>
+                    <p className='opacity-60'> 
+                        {Object.values(element)}
+                    </p>
+                </div>
+                
+            ))}
 
-            <div className='border-2 p-2 flex flex-col'>
-                <h1>H1 Title</h1>
-                <p className='opacity-60'> 
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
-                    Sed sit amet felis sit amet nunc tincidunt efficitur. 
-                    Vivamus auctor, purus nec tincidunt tincidunt, nunc neque 
-                    efficitur risus, nec porta turpis mauris nec purus. 
-                    Nulla facilisi. Integer nec tellus in nunc ultricies 
-                    tincidunt. Etiam auctor, lorem ac ultrices ultricies, 
-                    nunc elit ultricies nisi, nec fermentum nunc nunc 
-                    eget purus.
-                </p>
-            </div>
-
-            <div className='border-2 p-2 flex flex-col'>
-                <h1>Text</h1>
-                <p className='opacity-60'> 
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
-                    Sed sit amet felis sit amet nunc tincidunt efficitur. 
-                    Vivamus auctor, purus nec tincidunt tincidunt, nunc neque 
-                    efficitur risus, nec porta turpis mauris nec purus. 
-                    Nulla facilisi. Integer nec tellus in nunc ultricies 
-                    tincidunt. Etiam auctor, lorem ac ultrices ultricies, 
-                    nunc elit ultricies nisi, nec fermentum nunc nunc 
-                    eget purus.
-                </p>
-            </div>
+            
         </div>
 
         <div className='bg-black p-5 w-full flex flex-col gap-y-2 rounded-md'>
@@ -120,7 +291,13 @@ const Home = () => {
                     <div className='border flex flex-col gap-2 p-3'>
                         <img src={element.image} alt="background" />
                         <div className='flex flex-row justify-between'>
-                            <div className='border bg-[#282828] rounded-md p-1 cursor-pointer'>
+                            <div 
+                                className='border bg-[#282828] rounded-md p-1 cursor-pointer'
+                                onClick={()=>{
+                                    setSection2Data(element);
+                                    openSection2Modal('replaceImage')
+                                }}
+                                >
                                 <span className='text-sm'>Replace Image</span>
                             </div>
 
@@ -143,7 +320,7 @@ const Home = () => {
             </div>
         </div>
 
-        <div className='bg-black p-5 w-full flex flex-col gap-y-2 rounded-md'>
+        <div className='bg-black p-5 w-full flex flex-col gap-y-2 rounded-md' >
 
             <div className='flex flex-row justify-between items-center'>
                 <h1 className='text-3xl'>Call To Action</h1>
@@ -156,26 +333,15 @@ const Home = () => {
                 </div>
             </div>
 
-            <div className='border-2 p-2 flex flex-col'>
-                <h1>H1 Title</h1>
-                <p className='opacity-60'> 
-                    Exclusive brands for you!
-                </p>
-            </div>
-
-            <div className='border-2 p-2 flex flex-col'>
-                <h1>Button 1</h1>
-                <p className='opacity-60'> 
-                    Explore our collection
-                </p>
-            </div>
-
-            <div className='border-2 p-2 flex flex-col'>
-                <h1>Button 2</h1>
-                <p className='opacity-60'> 
-                    Get one of our packages
-                </p>
-            </div>
+            {ctaDataArray.map((element,index)=>(
+                <div className='border-2 p-2 flex flex-col' onClick={()=>openCtaModal()}>
+                    <h1>{Object.keys(element)}</h1>
+                    <p className='opacity-60'> 
+                        {Object.values(element)}
+                    </p>
+                </div>
+            ))}
+            
         </div>
 
         
