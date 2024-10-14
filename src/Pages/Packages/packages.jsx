@@ -38,6 +38,8 @@ const PackagesDetails = () => {
         }
     ];
 
+
+
     const dispatch = useDispatch();
     const { packages, loading , editPackagesData } = useSelector((store) => store.packagesReducer);
 
@@ -45,10 +47,7 @@ const PackagesDetails = () => {
         dispatch(getPackagesData());
     },[dispatch])
 
-    useEffect(()=>{
-        console.log(editPackagesData)
-    },[editPackagesData])
-
+    
     const handleEditPackage=(updateData)=>{
         
         dispatch(editPackageData(updateData));

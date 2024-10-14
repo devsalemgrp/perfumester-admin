@@ -77,7 +77,6 @@ export const dISpecialSection = (imageId) =>async (dispatch)=>{
 export const dISpecialBackgroundSection = (imageId)=>async (dispatch)=>{
     try{
         dispatch(WomenPageAction.dISpecialBackgroundSectionRequest());
-        /**Implementation */
         const response = await axios.delete('url/imageId');
         dispatch(WomenPageAction.dISpecialBackgroundSectionSuccess(response));
     }catch(err){
