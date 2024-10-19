@@ -1,10 +1,11 @@
 import axios from "axios";
 import { NewPageAction } from "./NewPageReducer";
+import { newPageData } from "../../Shared/NewPageData";
 
 export const getNewPageData = () => async (dispatch) => {
     try {
       dispatch(NewPageAction.getNewPageDataRequest());
-      const response = await axios.get('url');
+      const response = newPageData
       dispatch(NewPageAction.getNewPageDataSuccess(response));
     } catch (error) {
       dispatch(NewPageAction.getNewPageDataFailure());

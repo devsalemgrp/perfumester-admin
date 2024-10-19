@@ -1,10 +1,11 @@
 import axios from "axios";
 import { WomenPageAction } from "./WomensPageReducer";
+import { womenPageData } from "../../Shared/WomenPageData";
 
 export const getWomenPageData = () => async (dispatch) => {
     try {
         dispatch(WomenPageAction.getWomenPageDataRequest());
-        const response = await axios.get('url');
+        const response = womenPageData
         dispatch(WomenPageAction.getWomenPageDataSuccess(response));
     } catch (error) {
       dispatch(WomenPageAction.getWomenPageDataFailure());

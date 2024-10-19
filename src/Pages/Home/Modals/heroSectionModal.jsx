@@ -1,62 +1,68 @@
-import React, { useEffect, useState } from 'react'
-import Modal from 'react-modal'
+import React, { useEffect, useState } from 'react';
+import Modal from 'react-modal';
+import { customStyles } from '../../customStyle';
 
-const HeroSectionModal = ({isOpenModal,closeModal,data}) => {
+const HeroSectionModal = ({ isOpenModal, closeModal, data }) => {
+  const [updatedData, setUpdatedData] = useState(data);
 
-    const [updatedData , setUpdatedData] = useState(data);
+  const handleInputChange = (e, index) => {
+    const newData = {
+      ...updatedData,
+      [Object.keys(updatedData)[index]]: e.target.value,
+    };
+    setUpdatedData(newData);
+  };
 
-    const customStyles = {
-        content: {
-          width:'75%',
-          height:'75%',
-          margin:'auto',
-          padding:'0'
-        },
-      }
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    closeModal();
+  };
 
-    const handleInputChange = (e , key) => {
-        //Implementation of change 
-    }
-    
-    const onSubmit=(event)=>{
-        closeModal('hero');
-    }
-    
-    useEffect(()=>{ console.log({data:data}) },[])
+  useEffect(() => {
+    setUpdatedData(data);
+  }, [data]);
 
-    // if(!updatedData || Object.keys(updatedData).length === 0) return null;
   return (
-
     <Modal
-        isOpen={isOpenModal.hero}
-        onRequestClose={closeModal}
-        style={customStyles}
-        >
-        <div className='bg-[#313131] w-full h-full text-white p-3'>
-            <h1 className='text-4xl'>Edit Hero Section</h1>
-
-            <form onSubmit={onSubmit} className='my-2'>
-                {updatedData.map((element,index)=>(
-                    <div key={index} className="mb-4">
-                    {Object.keys(element).map((key)=>(
-                        <div key={key} className='flex flex-col gap-2'>
-                            <label>{key}</label>
-                            <textarea 
-                                type="text" 
-                                value={element[key]}
-                                // onChange={(e)=>handleInputChange(e,key)}
-                                className='w-full text-black'
-                            />
-                        </div>
-                    ))}
-                    
-                    </div>
-                ))}
-            </form>
-        </div>
+      isOpen={isOpenModal}
+      onRequestClose={closeModal}
+      style={customStyles}
+    >
+      <div className="w-full h-full text-white p-3">
+        <h1 className="text-4xl w-full text-center">Edit Hero Section</h1>
+        <form className="my-2" onSubmit={handleSubmit}>
+          <div className="mb-4">
+            {Object.entries(updatedData).map(([key, value], index) => (
+              <div key={index} className="flex flex-col gap-1 mt-10">
+                <label>{key.charAt(0).toUpperCase() + key.slice(1)}</label>
+                <textarea
+                  type="text"
+                  value={value}
+                  onChange={(e) => handleInputChange(e, index)}
+                  className="w-full p-2 mt-2 rounded bg-gray-800 border border-gray-600 text-white"
+                />
+              </div>
+            ))}
+          </div>
+          <div className="flex justify-end">
+            <button
+              type="button"
+              className="mr-3 p-2 px-5 bg-red-600 text-white rounded-lg hover:bg-red-500"
+              onClick={() => closeModal('cta')}
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="p-2 px-5 bg-green-600 text-white rounded-lg hover:bg-green-500"
+            >
+              Submit
+            </button>
+          </div>
+        </form>
+      </div>
     </Modal>
-    
-  )
-}
+  );
+};
 
-export default HeroSectionModal
+export default HeroSectionModal;

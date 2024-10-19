@@ -1,10 +1,11 @@
 import axios from "axios";
 import { PerfumesAction } from "./PerfumesReducer";
+import { products } from "../../Shared/PerfumesPageData";
 
 export const getPerfumesData = () => async (dispatch) => {
     try {
       dispatch(PerfumesAction.getPerfumesRequest());
-      const response = await axios.get('url');
+      const response = products;
       dispatch(PerfumesAction.getPerfumesSuccess(response));
     } catch (error) {
       dispatch(PerfumesAction.getPerfumesFailure());

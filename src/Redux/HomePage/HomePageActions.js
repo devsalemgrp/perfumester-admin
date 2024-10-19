@@ -1,12 +1,11 @@
 import axios from "axios";
 import { HomePageAction } from "./HomePageReducer";
+import { homepageData } from "../../Shared/HomePageData";
 
 export const getHomePageData = () => async (dispatch) => {
     try {
       dispatch(HomePageAction.getHomePageDataRequest());
-        
-      const response = await axios.get('Url');
-
+      const response = homepageData;
       dispatch(HomePageAction.getHomePageDataSuccess(response));
     } catch (error) {
       dispatch(HomePageAction.getHomePageDataFailure());
@@ -15,7 +14,7 @@ export const getHomePageData = () => async (dispatch) => {
     }
   };
 
-  //Add Image in the home section 
+//Add Image in the home section 
 export const aAIHomeSection = (newImage)=>async(dispatch)=>{
 
   try{

@@ -1,16 +1,34 @@
-import React, { useState } from 'react'
-import Heading from '../../Assets/Men/heading.png'
-import BackgroundImage from '../../Assets/Men/background.png'
-import Image1 from '../../Assets/Men/image.png'
-import Image2 from '../../Assets/Men/image2.png'
+import React, { useEffect, useState } from 'react'
 import HomeSectionModal from './Modals/homeSectionModal'
 import RecommendedPerfumesModal from './Modals/recommendedPerfumesModal'
 import SpecialPerfumesModal from './Modals/specialPerfumesModals'
 import SpecialBackgroundsModal from './Modals/specialBackgroundsModal'
+import { useDispatch, useSelector } from 'react-redux'
+import { getMensPageData } from '../../Redux/MensPage/MensPageActions'
 
 
 const Men = () => {
 
+    const dispatch = useDispatch();
+    const {menPageData} = useSelector((store)=>store.mensPageReducer);
+
+    
+    const [homeSection, setHomeSection] = useState([]);
+    const [recommendedPerfumes, setRecommendedPerfumes] = useState([]);
+    const [specialPerfumes, setSpecialPerfumes] = useState([]);
+    const [specialBackgrounds, setSpecialBackgrounds] = useState([]);
+
+    useEffect(()=>{
+        dispatch(getMensPageData());
+    },[dispatch]);
+
+    useEffect(()=>{
+        setHomeSection(menPageData.find((section)=>section.section === 'homeSection')?.content.images)
+        setRecommendedPerfumes(menPageData.find((section)=>section.section === 'recommendedPerfumes')?.content.images)
+        setSpecialBackgrounds(menPageData.find((section)=>section.section === 'specialBackgrounds')?.content.images)
+        setSpecialPerfumes(menPageData.find((section)=>section.section === 'specialPerfumes')?.content.images)
+  
+    },[menPageData])
 
     const [isOpenModal,setIsOpenModal] = useState(
         {
@@ -32,41 +50,7 @@ const Men = () => {
             }
         }
     )
-    const headingImage=[
-        {
-            image:Heading
-        },
-    ]
 
-    const recommendedPerfumes=[
-        {
-            image:Image1
-        },
-        {
-            image:Image2
-        }
-    ]
-
-    const specialPerfumes=[
-        {
-            image:Image1
-        },
-        {
-            image:Image2
-        },
-        {
-            image:Image1
-        }
-    ]
-
-    const backgroundImages=[
-        {
-            image:BackgroundImage
-        },
-        {
-            image:BackgroundImage
-        }
-    ]
 
     const openHomeSectionModal = (modalType)=>{
         setIsOpenModal(
@@ -80,10 +64,10 @@ const Men = () => {
         )
     }
 
-
-    const [recommendedPerfumesData,setRecommendedPerfumesData]=useState(null);
-    const [specialPerfumesData,setSpecialPerfumesData]=useState(null);
-    const [specialBackgroundsData,setSpecialBackgroundsData]=useState(null);
+    const [homeSectionData, setHomeSectionData] = useState({});
+    const [recommendedPerfumesData,setRecommendedPerfumesData]=useState({});
+    const [specialPerfumesData,setSpecialPerfumesData]=useState({});
+    const [specialBackgroundsData,setSpecialBackgroundsData]=useState({});
 
     const openRecommendedPerfumesModal = (modalType)=>{
         setIsOpenModal(
@@ -181,22 +165,22 @@ const Men = () => {
     <div className='w-full p-20 flex flex-col gap-y-5'>
 
     <HomeSectionModal
-        isOpenModal={isOpenModal}
+        isOpenModal={isOpenModal.home}
         closeModal={closeHomeSectionModal}
-        data={''}
+        data={homeSectionData}
         >
 
     </HomeSectionModal>
 
     <RecommendedPerfumesModal
-        isOpenModal={isOpenModal}
+        isOpenModal={isOpenModal.recommendedPerfumes}
         closeModal={closeRecommendedPerfumesModal}
         data={recommendedPerfumesData}
     >
         
     </RecommendedPerfumesModal>
     <SpecialPerfumesModal
-        isOpenModal={isOpenModal}
+        isOpenModal={isOpenModal.specialPerfumes}
         closeModal={closeSpecialPerfumesModal}
         data={specialPerfumesData}
     >
@@ -204,7 +188,7 @@ const Men = () => {
     </SpecialPerfumesModal>
 
     <SpecialBackgroundsModal
-        isOpenModal={isOpenModal}
+        isOpenModal={isOpenModal.specialBackgrounds}
         closeModal={closeSpecialBackgroundsModal}
         data={specialBackgroundsData}
     >
@@ -228,15 +212,17 @@ const Men = () => {
             
 
             <div className='flex flex-row gap-2'>
-                {headingImage.map((element,index)=>(
+                {homeSection.map((image,index)=>(
                     <div className='border-2 flex flex-col gap-4 p-3'>
-                        <img src={element.image} alt="background" />
+                        <img src={image} alt="background" />
                         <div className='flex flex-row justify-between'>
                             <div className='border bg-[#282828] p-1 rounded-md cursor-pointer'>
                                 <span className='text-sm'>Set as Image 1</span>
                             </div>
 
-                            <div className=' bg-white text-black px-2 flex items-center rounded-md cursor-pointer' onClick={()=>openHomeSectionModal('deleteImage')}>
+                            <div className=' bg-white text-black px-2 flex items-center rounded-md cursor-pointer' onClick={()=>{
+                                setHomeSectionData(image);
+                                openHomeSectionModal('deleteImage')}}>
                                 <span className='text-sm'>Delete</span>
                             </div>
                         </div>
@@ -254,25 +240,27 @@ const Men = () => {
             </div>
 
             <div className='flex flex-row gap-2'>
-              {recommendedPerfumes.map((element, index) => (
+              {recommendedPerfumes.map((image, index) => (
                 <div key={index} className='border flex flex-col items-center gap-4 p-3 w-56 '>
-                  {/* Image at the top */}
+                  
                   <div className='max-h-64 max-w-40'>
-                    <img src={element.image} alt="background" className='w-full h-full' />
+                    <img src={image} alt="background" className='w-full h-full' />
                   </div>
 
-                  {/* Buttons at the bottom */}
+                  
                   <div className='flex flex-row justify-between mt-auto w-full'>
                     <div className='border bg-[#282828] rounded-md p-1 cursor-pointer' 
                         onClick={()=>{
-                            setRecommendedPerfumesData(element)
+                            setRecommendedPerfumesData(image)
                             openRecommendedPerfumesModal('replaceImage')
                         }}>
                       <span className='text-sm'>Replace Image</span>
                     </div>
 
                     <div className='bg-white text-black px-2 rounded-md flex items-center cursor-pointer'
-                        onClick={()=>openRecommendedPerfumesModal('deleteImage')}
+                        onClick={()=>{
+                            setRecommendedPerfumesData(image)
+                            openRecommendedPerfumesModal('deleteImage')}}
                         >
                       <span className='text-sm'>Delete</span>
                     </div>
@@ -292,24 +280,25 @@ const Men = () => {
             </div>
 
             <div className='flex flex-row gap-2'>
-              {specialPerfumes.map((element, index) => (
+              {specialPerfumes.map((image, index) => (
                 <div key={index} className='border flex flex-col items-center gap-4 p-3 w-56 '>
-                  {/* Image at the top */}
+                  
                   <div className='max-h-64 max-w-40'>
-                    <img src={element.image} alt="background" className='w-full h-full' />
+                    <img src={image} alt="background" className='w-full h-full' />
                   </div>
 
-                  {/* Buttons at the bottom */}
                   <div className='flex flex-row justify-between mt-auto w-full'>
                     <div className='border bg-[#282828] rounded-md p-1 cursor-pointer' onClick={()=>{
-                        setSpecialPerfumesData(element);
+                        setSpecialPerfumesData(image);
                         openSpecialPerfumesModal('replaceImage')
                     }}>
                       <span className='text-sm'>Replace Image</span>
                     </div>
 
                     <div className='bg-white text-black px-2 rounded-md flex items-center cursor-pointer'
-                    onClick={()=>openSpecialPerfumesModal('deleteImage')}>
+                    onClick={()=>{
+                        setSpecialPerfumesData(image);
+                        openSpecialPerfumesModal('deleteImage')}}>
                       <span className='text-sm'>Delete</span>
                     </div>
                   </div>
@@ -329,9 +318,9 @@ const Men = () => {
             
 
             <div className='flex flex-row gap-2'>
-                {backgroundImages.map((element,index)=>(
+                {specialBackgrounds.map((image,index)=>(
                     <div className='border-2 flex flex-col gap-4 p-3'>
-                        <img src={element.image} alt="background" />
+                        <img src={image} alt="background" />
                         <div className='flex flex-row justify-between'>
                             <div className='border bg-[#282828] p-1 px-7 rounded-md cursor-pointer'>
                                 <span className='text-sm'>Set as Image 1</span>
@@ -339,7 +328,7 @@ const Men = () => {
 
                             <div className=' bg-white text-black px-7 flex items-center rounded-md cursor-pointer' onClick={()=>
                                 {
-                                    setSpecialBackgroundsData(element);
+                                    setSpecialBackgroundsData(image);
                                     openSpecialBackgroundsModal('deleteImage')}}>
                                 <span className='text-sm'>Delete</span>
                             </div>

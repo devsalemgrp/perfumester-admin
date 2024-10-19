@@ -1,76 +1,34 @@
 import React, { useEffect, useState } from 'react'
-import BackgroundImage from '../../Assets/HomePage/background.png'
-import Women from '../../Assets/HomePage/Women.png'
 import WelcomePageModal from './Modals/welcomeSectionModal'
 import HeroSectionModal from './Modals/heroSectionModal'
 import Section2Modal from './Modals/section2Modal'
 import CallToActionModal from './Modals/callToActionModal'
+import { useDispatch, useSelector } from 'react-redux'
+import { getHomePageData } from '../../Redux/HomePage/HomePageActions'
  
 const Home = () => {
+    
+     const [welcomeData,setWelcomeData] = useState([]);
+     const [section2Data, setSection2Data] = useState([]);
+     const [heroData,setHeroData] = useState({});
+     const [callToActionData, setCallToActionData] = useState({});
 
-    //Home table 
-    /**
-     * 1. Welcome Section
-     *  - Add another image
-     * 2. Hero Section
-     *  - H3 Title
-     *  - H1 Title
-     *  - Text
-     * 3. Section 2
-     *  - Replace Image1
-     *  - Replace Image2
-     * 4. Package Section
-     *  - Hide or Not 
-     * 5. Call To Action
-     *  - H1 Title
-     *  - Button 1
-     *  - Button 2
-     */
+     const [section2DataPassed,setSection2DataPassed] = useState({});
+     const [welcomeDeletedData,setWelcomeDeletedData]=useState({});
 
+     const dispatch=useDispatch();
+     const {homePageData} = useSelector((store)=>store.homePageReducer);
 
-    const backgroundImages=[
-        {
-            image:BackgroundImage
-        },
-        {
-            image:BackgroundImage
-        }
-    ]
-
-    const section2Images = [
-        {
-            image :Women,
-        },
-        {
-            image:Women,
-        }
-    ]
-
-    const heroDataArray=[
-        {
-            'H3 Title':'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sit amet felis sit amet nunc tincidunt efficitur. '
-        },
-        {
-            'H1 Title':'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sit amet felis sit amet nunc tincidunt efficitur. '
-        },
-        {
-            'Text':'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sit amet felis sit amet nunc tincidunt efficitur. '
-        }
-    ]
-    const ctaDataArray = [
-        {
-            'H1 Title': 'Exclusive brands for you!',
-        },
-        {
-            'Button 1': 'Explore our collection',
-        },
-        {
-            'Button 2': 'Get one of our packages',
-        }
-    ];
-
-    //When i click edit on the data , this data is found in the database , which means 
-    // i have the id and that whatever i change on this data , i update it on the database 
+    useEffect(() => {
+        dispatch(getHomePageData());
+    }, [dispatch]);
+      
+    useEffect(() => {
+        setWelcomeData(homePageData.find((section) => section.section === 'welcomeSection')?.content.images);
+        setHeroData(homePageData.find((section)=>section.section === 'heroSection')?.content);
+        setSection2Data(homePageData.find((section) => section.section === 'section2')?.content.images);
+        setCallToActionData(homePageData.find((section) => section.section === 'callToAction')?.content);
+    }, [homePageData]); 
 
     const [isOpenModal,setIsOpenModal] = useState({
         welcome:{
@@ -85,11 +43,6 @@ const Home = () => {
         cta:false
     });
   
-    const [welcomeData,setWelcomeData] = useState(null);
-    const [section2Data, setSection2Data] = useState(null);
-    const [heroData,setHeroData] = useState(heroDataArray);
-    const [callToActionData, setCallToActionData] = useState(ctaDataArray);
-    
 
     //Opening Modal Functions
     const openWelcomeModal=(modalType)=>{
@@ -179,30 +132,31 @@ const Home = () => {
 
   return (
     <div className='w-full p-20 flex flex-col gap-y-5'>
-        <WelcomePageModal
-            isOpenModal={isOpenModal}
-            closeModal={closeWelcomeModal}  
-            data={welcomeData}
-        >
-        </WelcomePageModal>
 
         <HeroSectionModal
-            isOpenModal={isOpenModal}
+            isOpenModal={isOpenModal.hero}
             closeModal={closeHeroSectionModal}  
             data={heroData}
         >
         </HeroSectionModal>
 
+         <WelcomePageModal
+            isOpenModal={isOpenModal.welcome}
+            closeModal={closeWelcomeModal}  
+            data={welcomeDeletedData}
+        >
+        </WelcomePageModal>
+
         <Section2Modal
-            isOpenModal={isOpenModal}
+            isOpenModal={isOpenModal.section2}
             closeModal={closeSection2Modal}
-            data={section2Data}
+            data={section2DataPassed}
             >
 
         </Section2Modal>
 
         <CallToActionModal
-            isOpenModal={isOpenModal}
+            isOpenModal={isOpenModal.cta}
             closeModal={closeCtaModal}
             data={callToActionData}
 
@@ -231,9 +185,9 @@ const Home = () => {
             
 
             <div className='flex flex-row gap-2'>
-                {backgroundImages.map((element,index)=>(
+                {welcomeData.map((image,index)=>(
                     <div className='border-2 flex flex-col gap-4 p-3'>
-                        <img src={element.image} alt="background" />
+                        <img src={image} alt="background" />
                         <div className='flex flex-row justify-between'>
                             <div className='border bg-[#282828] p-1 rounded-md cursor-pointer'>
                                 <span className='text-sm'>Set as Image 1</span>
@@ -241,7 +195,7 @@ const Home = () => {
 
                             <div
                                 onClick={()=>{
-                                    setWelcomeData(element)
+                                    setWelcomeDeletedData(image)
                                     openWelcomeModal('deleteImage')}} 
                                 className=' bg-white text-black px-2 flex items-center rounded-md cursor-pointer'>
                                 <span className='text-sm'>Delete</span>
@@ -261,15 +215,15 @@ const Home = () => {
 
             <h1 className='text-3xl'>Hero Section</h1>
 
-            {heroDataArray.map((element,index)=>(
-                <div className='border-2 p-2 flex flex-col'>
-                    <h1>{Object.keys(element)}</h1>
-                    <p className='opacity-60'> 
-                        {Object.values(element)}
+            {Object.entries(heroData)?.map(([key, value], index) => (
+                <div className='border-2 p-2 flex flex-col' key={index}>
+                    <h1>{key.charAt(0).toUpperCase() + key.slice(1)}</h1>
+                    <p className='opacity-60'>
+                    {value}
                     </p>
                 </div>
-                
             ))}
+
 
             
         </div>
@@ -287,21 +241,25 @@ const Home = () => {
             </div>
 
             <div className='flex flex-row gap-2'>
-                {section2Images.map((element,index)=>(
+                {section2Data.map((image)=>(
                     <div className='border flex flex-col gap-2 p-3'>
-                        <img src={element.image} alt="background" />
+                        <img src={image} alt="background" />
                         <div className='flex flex-row justify-between'>
                             <div 
                                 className='border bg-[#282828] rounded-md p-1 cursor-pointer'
                                 onClick={()=>{
-                                    setSection2Data(element);
+                                    setSection2DataPassed(image);
                                     openSection2Modal('replaceImage')
                                 }}
                                 >
                                 <span className='text-sm'>Replace Image</span>
                             </div>
 
-                            <div className=' bg-white text-black px-2 rounded-md flex items-center cursor-pointer'>
+                            <div className=' bg-white text-black px-2 rounded-md flex items-center cursor-pointer'
+                                onClick={()=>{
+                                    setSection2DataPassed(image)
+                                    openSection2Modal('deleteImage')}}
+                                >
                                 <span className='text-sm'>Delete</span>
                             </div>
                         </div>
@@ -333,11 +291,11 @@ const Home = () => {
                 </div>
             </div>
 
-            {ctaDataArray.map((element,index)=>(
+            {Object.entries(callToActionData).map(([key,value],index)=>(
                 <div className='border-2 p-2 flex flex-col' onClick={()=>openCtaModal()}>
-                    <h1>{Object.keys(element)}</h1>
+                    <h1>{key.charAt(0).toUpperCase() + key.slice(1)}</h1>
                     <p className='opacity-60'> 
-                        {Object.values(element)}
+                        {value}
                     </p>
                 </div>
             ))}

@@ -1,11 +1,12 @@
 import axios from "axios";
 import { MensPageAction } from "./MensPageReducer";
+import { mensPageData } from "../../Shared/MensPageData";
 
 export const getMensPageData = () => async (dispatch) => {
     try {
       dispatch(MensPageAction.getMenPageDataRequest());
 
-      const response = await axios.get('url');
+      const response = mensPageData
       dispatch(MensPageAction.getMenPageDataSuccess(response));
     } catch (error) {
       dispatch(MensPageAction.getMenPageDataFailure());
