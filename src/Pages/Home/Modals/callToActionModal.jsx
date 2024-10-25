@@ -1,23 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
 import { customStyles } from '../../customStyle';
+import { useDispatch } from 'react-redux';
+import { editCtaSectionData } from '../../../Redux/HomePage/HomePageActions';
 
 const CallToActionModal = ({ isOpenModal, closeModal, data }) => {
-  const [updatedData, setUpdatedData] = useState({});
-
+  const [updatedData, setUpdatedData] = useState([]);
+  const dispatch = useDispatch();
   useEffect(() => {
     setUpdatedData(data);
   }, [data]);
 
-  const handleInputChange = (e, key) => {
-    setUpdatedData({
-      ...updatedData,
-      [key]: e.target.value,
-    });
+  const handleInputChange = (e, index, field) => {
+    const newData = updatedData.map((item, i) =>
+      i === index ? { ...item, [field]: e.target.value } : item
+    );
+    setUpdatedData(newData);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    dispatch(editCtaSectionData(updatedData));
+    setUpdatedData();
     closeModal('cta');
   };
 
@@ -33,14 +37,15 @@ const CallToActionModal = ({ isOpenModal, closeModal, data }) => {
         </h1>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {Object.entries(updatedData).map(([key, value]) => (
-            <div key={key} className="flex flex-col gap-2">
+          {updatedData.map((element, index) => (
+            <div key={element} className="flex flex-col gap-2">
               <label className="text-lg">
-                {key.charAt(0).toUpperCase() + key.slice(1)}
+                {element.subsection.charAt(0).toUpperCase() +
+                  element.subsection.slice(1)}
               </label>
               <textarea
-                value={value}
-                onChange={(e) => handleInputChange(e, key)}
+                value={element.content}
+                onChange={(e) => handleInputChange(e, index, 'content')}
                 className="w-full p-2 mt-2 rounded bg-gray-800 border border-gray-600 text-white"
               />
             </div>

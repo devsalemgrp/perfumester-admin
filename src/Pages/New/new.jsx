@@ -1,30 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import Heading from '../../Assets/New/heading.png';
-import HomeSectionModal from './Modals/homeSectionModal';
 import { useDispatch, useSelector } from 'react-redux';
 import { getNewPageData } from '../../Redux/NewPage/NewPageActions';
+import HomeSectionModal from './Modals/homeSectionModal';
 
 const New = () => {
   const dispatch = useDispatch();
   const { newPageData } = useSelector((store) => store.newPageReducer);
-
-  const [homeSection, setHomeSection] = useState([]);
-
-  const backgroundImages = [
-    {
-      image: Heading,
-    },
-  ];
+  const localHost = 'http://localhost:3001/';
+  const [welcomeSection, setWelcomeSection] = useState([]);
 
   useEffect(() => {
     dispatch(getNewPageData());
   }, [dispatch]);
 
   useEffect(() => {
-    setHomeSection(
-      newPageData.find((section) => section.section === 'homeSection')?.content
-        .images
-    );
+    if (newPageData.data) {
+      setWelcomeSection(
+        newPageData.data.filter((section) => section.section === 'welcome')
+      );
+    }
   }, [newPageData]);
 
   const [isOpenModal, setIsOpenModal] = useState({
@@ -34,8 +29,8 @@ const New = () => {
     },
   });
 
-  const [homeSectionData, setHomeSectionData] = useState(null);
-  const openHomeSectionModal = (modalType) => {
+  const [welcomeSectionData, setWelcomeSectionData] = useState(null);
+  const openWelcomeSectionModal = (modalType) => {
     setIsOpenModal((prevState) => ({
       ...prevState,
       home: {
@@ -45,7 +40,7 @@ const New = () => {
     }));
   };
 
-  const closeHomeSectionModal = (modalType) => {
+  const closeWelcomeSectionModal = (modalType) => {
     setIsOpenModal((prevState) => ({
       ...prevState,
       home: {
@@ -59,8 +54,8 @@ const New = () => {
     <div className="w-full p-20 flex flex-col gap-y-5">
       <HomeSectionModal
         isOpenModal={isOpenModal.home}
-        closeModal={closeHomeSectionModal}
-        data={homeSectionData}
+        closeModal={closeWelcomeSectionModal}
+        data={welcomeSectionData}
       ></HomeSectionModal>
 
       <h1 className="text-4xl">New Page</h1>
@@ -71,7 +66,7 @@ const New = () => {
 
           <div
             className="p-2 px-5 bg-[#323d4e] rounded-md flex flex-row gap-2 items-center cursor-pointer"
-            onClick={() => openHomeSectionModal('addAnotherImage')}
+            onClick={() => openWelcomeSectionModal('addAnotherImage')}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -91,9 +86,9 @@ const New = () => {
         </div>
 
         <div className="flex flex-row gap-2">
-          {homeSection.map((image, index) => (
+          {welcomeSection.map((element, index) => (
             <div className="border-2 flex flex-col gap-4 p-3">
-              <img src={image} alt="background" />
+              <img src={localHost + element.content} alt="background" />
               <div className="flex flex-row justify-between">
                 <div className="border bg-[#282828] p-1 rounded-md cursor-pointer">
                   <span className="text-sm">Set as Image 1</span>
@@ -102,8 +97,8 @@ const New = () => {
                 <div
                   className=" bg-white text-black px-2 flex items-center rounded-md cursor-pointer"
                   onClick={() => {
-                    setHomeSectionData(image);
-                    openHomeSectionModal('deleteImage');
+                    setWelcomeSectionData(element);
+                    openWelcomeSectionModal('deleteImage');
                   }}
                 >
                   <span className="text-sm">Delete</span>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
-import EditProductModal from '../Pages/Products/Modals/EditProductModal';
+import EditProductModal from '../Modals/EditProductModal';
 
 const generateColumns = (data, editProduct) => {
   if (!data || data.length === 0) return [];
@@ -34,10 +34,15 @@ const generateColumns = (data, editProduct) => {
               </div>
             ) : key === 'price' ? (
               <h1 className="text-center">${row[key]}</h1>
-            ) : key === 'productPhoto' ? (
+            ) : key === 'image' ? (
               <div className="p-2 px-5 flex flex-row items-center gap-2">
                 <div className=" rounded-lg">
-                  <img src={row[key]} alt="" width={100} />
+                  <img
+                    src={'http://localhost:3001' + row[key]}
+                    alt=""
+                    width={100}
+                    className="max-h-9"
+                  />
                 </div>
                 <div className="border p-1">
                   <svg
@@ -109,6 +114,22 @@ const ReactDataTable = ({ dataEntered, editProduct }) => {
     },
   };
 
+  const desiredOrder = [
+    'id',
+    'image',
+    'name',
+    'description',
+    'subscriptionCategory',
+    'category',
+    'price',
+    'status',
+  ];
+  dataEntered = dataEntered.map((item) => {
+    return desiredOrder.reduce((acc, key) => {
+      acc[key] = item[key];
+      return acc;
+    }, {});
+  });
   const columns = generateColumns(dataEntered, editProduct);
   return (
     <>

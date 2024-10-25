@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import Modal from 'react-modal';
+import { useDispatch, useSelector } from 'react-redux';
+import { addProducts } from '../../../Redux/Perfumes/PerfumesActions';
 
 const AddProductModal = ({ isOpenModal, closeModal }) => {
   const [productName, setProductName] = useState('');
@@ -8,6 +10,11 @@ const AddProductModal = ({ isOpenModal, closeModal }) => {
   const [status, setStatus] = useState('Available');
   const [productPhoto, setProductPhoto] = useState('');
   const [imagePreview, setImagePreview] = useState('');
+  const [category, setCategory] = useState('');
+  const [subscriptionCategory, setSubscriptionCategory] = useState('');
+
+  const dispatch = useDispatch();
+  const { addProduct } = useSelector((store) => store.perfumesReducer);
 
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
@@ -18,18 +25,22 @@ const AddProductModal = ({ isOpenModal, closeModal }) => {
   };
 
   const handleSave = () => {
-    console.log({
-      productName,
-      description,
-      price,
-      status,
-      productPhoto,
-    });
+    dispatch(
+      addProducts({
+        productName,
+        description,
+        price,
+        status,
+        productPhoto,
+        subscriptionCategory,
+        category,
+      })
+    );
 
-    closeEditModal(); // Close modal after saving
+    //closeEditModal(); // Close modal after saving
   };
 
-  const closeEditModal=()=>{
+  const closeEditModal = () => {
     setDescription('');
     setPrice('');
     setProductName('');
@@ -38,8 +49,7 @@ const AddProductModal = ({ isOpenModal, closeModal }) => {
     setImagePreview('');
 
     closeModal();
-
-  }
+  };
 
   const customStyles = {
     content: {
@@ -113,6 +123,31 @@ const AddProductModal = ({ isOpenModal, closeModal }) => {
               >
                 <option value="Available">Available</option>
                 <option value="Out of Stock">Out of Stock</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-xl">Category</label>
+              <select
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                className="w-full p-2 mt-2 rounded bg-gray-800 border border-gray-600 text-white"
+              >
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-xl">Subscription Category</label>
+              <select
+                value={subscriptionCategory}
+                onChange={(e) => setSubscriptionCategory(e.target.value)}
+                className="w-full p-2 mt-2 rounded bg-gray-800 border border-gray-600 text-white"
+              >
+                <option value="Standard">Standard</option>
+                <option value="MidRange">MidRange</option>
+                <option value="HighEnd">HighEnd</option>
               </select>
             </div>
 

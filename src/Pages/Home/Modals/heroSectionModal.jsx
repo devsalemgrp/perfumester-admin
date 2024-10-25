@@ -1,20 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import Modal from 'react-modal';
 import { customStyles } from '../../customStyle';
+import { editHeroSection } from '../../../Redux/HomePage/HomePageActions';
+import { useDispatch } from 'react-redux';
 
 const HeroSectionModal = ({ isOpenModal, closeModal, data }) => {
   const [updatedData, setUpdatedData] = useState(data);
+  const dispatch = useDispatch();
 
-  const handleInputChange = (e, index) => {
-    const newData = {
-      ...updatedData,
-      [Object.keys(updatedData)[index]]: e.target.value,
-    };
+  const handleInputChange = (e, index, field) => {
+    const newData = updatedData.map((item, i) =>
+      i === index ? { ...item, [field]: e.target.value } : item
+    );
     setUpdatedData(newData);
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
+
+    dispatch(editHeroSection(updatedData));
     closeModal();
   };
 
@@ -32,15 +36,20 @@ const HeroSectionModal = ({ isOpenModal, closeModal, data }) => {
         <h1 className="text-4xl w-full text-center">Edit Hero Section</h1>
         <form className="my-2" onSubmit={handleSubmit}>
           <div className="mb-4">
-            {Object.entries(updatedData).map(([key, value], index) => (
+            {updatedData.map((item, index) => (
               <div key={index} className="flex flex-col gap-1 mt-10">
-                <label>{key.charAt(0).toUpperCase() + key.slice(1)}</label>
-                <textarea
-                  type="text"
-                  value={value}
-                  onChange={(e) => handleInputChange(e, index)}
-                  className="w-full p-2 mt-2 rounded bg-gray-800 border border-gray-600 text-white"
-                />
+                <div className="flex flex-col gap-1">
+                  {/* Display subsection in the label */}
+                  <label>{item.subsection}</label>
+
+                  {/* Display content in the textarea */}
+                  <textarea
+                    type="text"
+                    value={item.content}
+                    onChange={(e) => handleInputChange(e, index, 'content')}
+                    className="w-full p-2 mt-2 rounded bg-gray-800 border border-gray-600 text-white"
+                  />
+                </div>
               </div>
             ))}
           </div>

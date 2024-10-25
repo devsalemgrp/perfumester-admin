@@ -42,10 +42,14 @@ const generateColumns = (data, editProduct) => {
               </div>
             ) : key === 'price' ? (
               <h1 className="text-center">${row[key]}</h1>
-            ) : key === 'productPhoto' ? (
+            ) : key === 'image' ? (
               <div className="p-2 px-5 flex flex-row items-center gap-2">
                 <div className=" rounded-lg">
-                  <img src={row[key]} alt="" width={100} />
+                  <img
+                    src={'http://localhost:3001' + row[key]}
+                    alt=""
+                    width={100}
+                  />
                 </div>
                 <div className="border p-1">
                   <svg

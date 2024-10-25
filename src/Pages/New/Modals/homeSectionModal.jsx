@@ -1,20 +1,41 @@
 import React, { useState } from 'react';
 import Modal from 'react-modal';
 import { customStyles } from '../../customStyle';
+import { useDispatch } from 'react-redux';
+import {
+  aAIHomeSection,
+  dIHomeSection,
+} from '../../../Redux/NewPage/NewPageActions';
 
 const HomeSectionModal = ({ isOpenModal, closeModal, data }) => {
   const [selectedImage, setSelectedImage] = useState(null);
-
+  const localHost = 'http://localhost:3001/';
+  const [imagePreview, setImagePreview] = useState(null);
+  const dispatch = useDispatch();
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
-      setSelectedImage(URL.createObjectURL(file));
+      setSelectedImage(file);
+      setImagePreview(URL.createObjectURL(file));
     }
   };
 
   const onSubmit = (event) => {
     event.preventDefault();
-    closeModal('addAnotherImage');
+    dispatch(aAIHomeSection(selectedImage));
+    _closeModal('addAnotherImage');
+  };
+
+  const onDelete = (event) => {
+    event.preventDefault();
+    dispatch(dIHomeSection(data.id));
+    _closeModal('deleteImage');
+  };
+
+  const _closeModal = (type) => {
+    setSelectedImage(null);
+    setImagePreview(null);
+    closeModal(type);
   };
 
   return (
@@ -41,11 +62,11 @@ const HomeSectionModal = ({ isOpenModal, closeModal, data }) => {
             </button>
           </form>
 
-          {selectedImage && (
+          {imagePreview && (
             <div className="mt-4 text-center">
               <h2 className="text-2xl mb-2">Image Preview:</h2>
               <img
-                src={selectedImage}
+                src={imagePreview}
                 alt="Preview"
                 width={150}
                 className="rounded shadow-lg"
@@ -63,14 +84,14 @@ const HomeSectionModal = ({ isOpenModal, closeModal, data }) => {
         <div className="flex flex-col items-center gap-7 text-white p-5">
           <h1 className="text-4xl text-center mb-4">Delete the Image</h1>
           <img
-            src={data}
+            src={localHost + data?.content}
             alt="Delete Preview"
             width={300}
             className="rounded shadow-lg"
           />
           <button
             className="bg-red-500 text-white px-5 p-2 border rounded-lg w-1/2 hover:bg-red-600 transition-colors"
-            onClick={() => closeModal('deleteImage')}
+            onClick={onDelete}
           >
             Yes, Delete
           </button>
